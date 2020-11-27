@@ -3,12 +3,12 @@
 import telebot
 
 API_TOKEN = 'xxxxxx'
-
 bot = telebot.TeleBot(API_TOKEN)
 
 
 class StopExcp(Exception):
     pass
+
 
 
 class Node:
@@ -18,11 +18,28 @@ class Node:
         self.no = no
         self.question = question
 
+    def get_child(self, messageReceived, default_node):
+      if messageReceived=='indietro':
+        if self.parent==None:
+          return self, 'sono alla root'
+        return self.parent, ''
+
+      if self.no==None or self.yes==None:
+        return default_node, 'todo_restart'
+      
+      if messageReceived=='si':
+        return self.yes, ''
+      
+      if messageReceived=='no':
+        return self.no, ''
+      
+        
+      return self, 'Mi spiace, non ho capito quello che hai detto... Riprova!'
+
     def __str__(self):
       if self.no==None or self.yes==None:
         return 'None'
       return 'question: ' + self.question + '\nif yes: ' + self.yes.question + '\nif no: ' + self.no.question
-
 
 root_node = Node(question="Tuo figlio è stato allontanato da scuola?")
 
@@ -45,9 +62,8 @@ for n in str_nodes:
   new_node.parent = parent_node
   if prop[2] == 'yes':
     parent_node.yes = new_node
-  else:
+  elif prop[2] == 'no':
     parent_node.no = new_node
-
   node_list.append(new_node)
 
 chat_id = 774306756
@@ -59,43 +75,24 @@ welcome_message = "Ciao! Sono il bot che ti aiuterà a comprendere, al meglio, q
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
     bot.send_message(chat_id, welcome_message)
-    parent_node = root_node
 
 def send_document(messageToDefine):
-    a=0
-
-    if(messageToDefine == 'modulo_1'):
-        a = 1
-    elif(messageToDefine == 'modulo_2'):
-        a = 2
-    elif(messageToDefine == 'modulo_3'):
-        a = 3
-    elif(messageToDefine == 'modulo_4'):
-        a = 4
-
-    doc = open('modulo_'+str(a)+'.pdf', 'rb')
+    d = {'modulo_1':'1','modulo_2':'2','modulo_3':'3','modulo_4':'4'}
+    
+    doc = open('modulo_'+d[messageToDefine]+'.pdf', 'rb')
     bot.send_document(chat_id, doc)
 
 @bot.message_handler(func=lambda message: True)
 def echo_message(message):
     global parent_node
 
-    if (message.text).lower() == 'si':
-        parent_node = parent_node.yes
-        nextMessage = parent_node.question
-        if 'modulo' in nextMessage:
-            send_document(nextMessage)
-        else:
-            bot.send_message(chat_id, nextMessage)
-    elif (message.text).lower() == 'no':
-        parent_node = parent_node.no
-        nextMessage = parent_node.question
-        if 'modulo' in nextMessage:
-            send_document(nextMessage)
-        else:
-            bot.send_message(chat_id, nextMessage)
-
+    #toreview
+    parent_node, nextMessage = parent_node.get_child((message.text).lower(), root_node)
+    
+    if 'modulo' in parent_node.question:
+      send_document(parent_node.question)
     else:
-        nextMessage = "Mi spiace, non ho capito quello che hai detto... Riprova!"
+      nextMessage += '\n' + parent_node.question
+      bot.send_message(chat_id, nextMessage)
 
 bot.polling()
