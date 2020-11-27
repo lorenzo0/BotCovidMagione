@@ -1,3 +1,17 @@
-Il genitore/collaboratore dovrebbe aver ricevuto un modulo al momento del ritiro, lo hai ricevuto?; Tuo figlio è stato allontanato da scuola?; yes
-Compilalo e consegnalo! Contatta comunque il pediatra; Il genitore/collaboratore dovrebbe aver ricevuto un modulo al momento del ritiro, lo hai ricevuto?; yes
-dowload file!; Il genitore/collaboratore dovrebbe aver ricevuto un modulo al momento del ritiro, lo hai ricevuto?; no
+Il genitore/collaboratore dovrebbe aver ricevuto un documento al momento del ritiro, lo hai ricevuto?;Tuo figlio è stato allontanato da scuola?;yes;
+Compilalo e consegnalo! Contatta comunque il pediatra;Il genitore/collaboratore dovrebbe aver ricevuto un documento al momento del ritiro, lo hai ricevuto?;yes;
+modulo_1;Il genitore/collaboratore dovrebbe aver ricevuto un documento al momento del ritiro, lo hai ricevuto?;no;
+Bambino ha in casa casi manifestanti COVID?;Tuo figlio è stato allontanato da scuola?;no;
+L'assenza è dovuta a motivi di salute (Non sintomi covid)?;Bambino ha in casa casi manifestanti COVID?;no;
+Hai contattato il pedriatra?;Bambino ha in casa casi manifestanti COVID?;yes;
+Il bambino ha avuto un tampone positivo?;L'assenza è dovuta a motivi di salute (Non sintomi covid)?;yes;
+modulo_3;L'assenza è dovuta a motivi di salute (Non sintomi covid)?;no;
+E' necessario contattarlo!;Hai contattato il pedriatra?;no;
+Ha ritenuto necessario fare un tampone?;Hai contattato il pedriatra?;yes;
+modulo_4;Ha ritenuto necessario fare un tampone?;no;
+E' risultato negativo?;Ha ritenuto necessario fare un tampone?;yes;
+E' necessaria una certificazione medica!;E' risultato negativo?;yes;
+Beh, stai a casa!;E' risultato negativo?;no;
+modulo_2;Il bambino ha avuto un tampone positivo?;no;
+Doppio tampone negativo! Certificazione medica!;Il bambino ha avuto un tampone positivo?;yes;
+Tuo figlio è stato allontanato da scuola?;Compilalo e consegnalo! Contatta comunque il pediatra;none;

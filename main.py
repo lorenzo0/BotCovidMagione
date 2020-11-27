@@ -2,21 +2,13 @@
 
 import telebot
 
-API_TOKEN = 'xxxxx'
+API_TOKEN = 'xxxxxx'
 
 bot = telebot.TeleBot(API_TOKEN)
 
 
 class StopExcp(Exception):
     pass
-
-'''
-Nodo:
-   - question
-   - reply
-   - questionLeft (no)
-   - questionRight (yes)
-'''
 
 
 class Node:
@@ -32,13 +24,13 @@ class Node:
       return 'question: ' + self.question + '\nif yes: ' + self.yes.question + '\nif no: ' + self.no.question
 
 
-root_node = Node(question="Tuo figlio è stato allontanato da scuola?")   
+root_node = Node(question="Tuo figlio è stato allontanato da scuola?")
 
 def search(node_list, question):
   for node in node_list:
     if node.question == question:
       return node
-  return  
+  return
 
 
 # def read_tree():
@@ -49,7 +41,7 @@ for n in str_nodes:
   #print(prop)
   new_node = Node(question=prop[0])
   parent_node = search(node_list, prop[1])
-  
+
   new_node.parent = parent_node
   if prop[2] == 'yes':
     parent_node.yes = new_node
@@ -58,39 +50,50 @@ for n in str_nodes:
 
   node_list.append(new_node)
 
+chat_id = 774306756
+parent_node = root_node
 
+welcome_message = "Ciao! Sono il bot che ti aiuterà a comprendere, al meglio, quale dei moduli bisogna consegnare in ogni possibile casistica. \nTi farò una serie di domande e ti chiedo gentilmente di rispondermi in modo molto preciso 'Si' oppure 'No'. \nMi potrai contattare ad ogni momento. \nSe ci sono problemi tecnici con il bot, ti prego di contattare il mio creatore, attraverso la mail lorenzopisa00@gmail.com. \n\nIniziamo quindi con una domanda semplice, tuo figlio è stato allontanato da scuola?"
 
 # todo help
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
-    bot.reply_to(message, """\
-Ciao! Sono il bot che ti aiuterà a comprendere, al meglio, quale dei moduli bisogna consegnare in ogni possibile casistica. Ti farò una serie di domande e ti chiedo gentilmente di rispondermi
-in modo molto preciso 'Si' oppure 'No'. Mi potrai contattare ad ogni momento. Se ci sono problemi tecnici con il bot, ti prego di contattare il mio creatore, attraverso la mail lorenzopisa00@gmail.com.
+    bot.send_message(chat_id, welcome_message)
+    parent_node = root_node
 
-Iniziamo quindi con una domanda semplice, tuo figlio è stato allontanato da scuola?\
-""")
+def send_document(messageToDefine):
+    a=0
 
+    if(messageToDefine == 'modulo_1'):
+        a = 1
+    elif(messageToDefine == 'modulo_2'):
+        a = 2
+    elif(messageToDefine == 'modulo_3'):
+        a = 3
+    elif(messageToDefine == 'modulo_4'):
+        a = 4
 
-parent_node = root_node
-print(parent_node.question)
-print(root_node.yes)
-print(str(root_node))
-
+    doc = open('modulo_'+str(a)+'.pdf', 'rb')
+    bot.send_document(chat_id, doc)
 
 @bot.message_handler(func=lambda message: True)
 def echo_message(message):
-    #message = message.lower()
     global parent_node
 
-    if message.text == 'si':
-        print("ci sonoo")
+    if (message.text).lower() == 'si':
         parent_node = parent_node.yes
         nextMessage = parent_node.question
-        bot.reply_to(message, nextMessage)
-    elif message.text == 'no':
+        if 'modulo' in nextMessage:
+            send_document(nextMessage)
+        else:
+            bot.send_message(chat_id, nextMessage)
+    elif (message.text).lower() == 'no':
         parent_node = parent_node.no
         nextMessage = parent_node.question
-        bot.reply_to(message, nextMessage)
+        if 'modulo' in nextMessage:
+            send_document(nextMessage)
+        else:
+            bot.send_message(chat_id, nextMessage)
 
     else:
         nextMessage = "Mi spiace, non ho capito quello che hai detto... Riprova!"
