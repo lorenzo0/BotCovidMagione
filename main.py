@@ -2,7 +2,7 @@
 
 import telebot
 
-API_TOKEN = 'xxxxxx'
+API_TOKEN = 'xxxxxxxxx'
 bot = telebot.TeleBot(API_TOKEN)
 
 
@@ -26,14 +26,14 @@ class Node:
 
       if self.no==None or self.yes==None:
         return default_node, 'todo_restart'
-      
+
       if messageReceived=='si':
         return self.yes, ''
-      
+
       if messageReceived=='no':
         return self.no, ''
-      
-        
+
+
       return self, 'Mi spiace, non ho capito quello che hai detto... Riprova!'
 
     def __str__(self):
@@ -41,7 +41,7 @@ class Node:
         return 'None'
       return 'question: ' + self.question + '\nif yes: ' + self.yes.question + '\nif no: ' + self.no.question
 
-root_node = Node(question="Tuo figlio è stato allontanato da scuola?")
+root_node = Node(question="Suo figlio/a è stato allontanato da scuola?")
 
 def search(node_list, question):
   for node in node_list:
@@ -65,20 +65,29 @@ for n in str_nodes:
   elif prop[2] == 'no':
     parent_node.no = new_node
   node_list.append(new_node)
+  parent_node.__str__()
 
 chat_id = 774306756
 parent_node = root_node
 
-welcome_message = "Ciao! Sono il bot che ti aiuterà a comprendere, al meglio, quale dei moduli bisogna consegnare in ogni possibile casistica. \nTi farò una serie di domande e ti chiedo gentilmente di rispondermi in modo molto preciso 'Si' oppure 'No'. \nMi potrai contattare ad ogni momento. \nSe ci sono problemi tecnici con il bot, ti prego di contattare il mio creatore, attraverso la mail lorenzopisa00@gmail.com. \n\nIniziamo quindi con una domanda semplice, tuo figlio è stato allontanato da scuola?"
+class color:
+   RED = '\033[91m'
+   BOLD = '\033[1m'
+   END = '\033[0m'
 
-# todo help
+welcome_message = "Ciao! Sono il BOT che ti aiuterà a comprendere quale modulo è necessario consegnare nel caso in cui tuo figlio/a sia stato assente o allontanato da scuola.\n Ti farò una serie di domande, alle quali dovrai rispondere 'Si' oppure 'No'. Mi potrai contattare in ogni momento.\nSe ci sono problemi tecnici, contatta l’assistenza informatica all’indirizzo email lorenzopisa00@gmail.com.\nPrima di iniziare, ti ricordo che per assenze, anche di salute, minori di 3 giorni non sono richiesti moduli giustificativi per il rientro a scuola.\n\nIniziamo quindi con una domanda semplice, tuo figlio è stato allontanato da scuola?"
+help_message = "Il servizio BOT è composto da una struttura di domande collegate fra loro attraverso la scelta di risposte affermative (SI) o negative (NO). Ad ogni quesito è quindi possibile scegliere solamente una delle due risposte possibili. E’ possibile, in ogni momento, tornare alla domanda precedente attraverso la parola chiave indietro.\n\nsi-> risposta affermativa\nno -> risposta negativa\nindietro -> torna al quesito precedente\n"
+
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
     bot.send_message(chat_id, welcome_message)
 
+@bot.message_handler(commands=['help'])
+def send_help(message):
+    bot.send_message(chat_id, help_message)
 def send_document(messageToDefine):
     d = {'modulo_1':'1','modulo_2':'2','modulo_3':'3','modulo_4':'4'}
-    
+
     doc = open('modulo_'+d[messageToDefine]+'.pdf', 'rb')
     bot.send_document(chat_id, doc)
 
@@ -88,7 +97,7 @@ def echo_message(message):
 
     #toreview
     parent_node, nextMessage = parent_node.get_child((message.text).lower(), root_node)
-    
+
     if 'modulo' in parent_node.question:
       send_document(parent_node.question)
     else:
