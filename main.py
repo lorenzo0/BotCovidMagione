@@ -2,7 +2,7 @@
 
 import telebot
 
-API_TOKEN = 'xxxxxxxxx'
+API_TOKEN = 'xxxxxx'
 bot = telebot.TeleBot(API_TOKEN)
 
 
